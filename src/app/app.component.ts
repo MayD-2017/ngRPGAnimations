@@ -25,13 +25,15 @@ export class AppComponent {
 
   spawn() {
     this.slimeIsPresent = true;
+    this.ng_death = false;
     // TODO Animation angular avec forwards
     this.showSlime()
   }
 
   death(){
     this.slimeIsPresent = false;
-    this.ng_death = false;
+    this.ng_death = true;
+    setTimeout(() => {this.ng_death = false;}, 1000);
     // TODO Animation angular avec forwards
     this.hideSlime()
     // TODO 2e animation angular en même temps
