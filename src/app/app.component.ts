@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import {transition, trigger, useAnimation} from "@angular/animations";
-import { shakeX } from 'ng-animate';
+import { pulse, shakeX } from 'ng-animate';
 
 const DEATH_DURATION_SECONDS = 0.5
 @Component({
@@ -10,15 +10,22 @@ const DEATH_DURATION_SECONDS = 0.5
   animations: [
     trigger("death", [
       transition(
-        ":increment",
-        useAnimation(shakeX, { params: { timing: DEATH_DURATION_SECONDS } })
-      ),
+        "* => true",[
+          useAnimation(shakeX, { params: { timing: DEATH_DURATION_SECONDS } })
+        ])
     ]),
-  ]
+    trigger('attack', [
+      transition('* => true', [
+        useAnimation(pulse, { params: { timing: 0.3, scale: 4.5} }),
+        // useAnimation( /* Code de la deuxième animation */ ),
+      ])
+    ]),
+    ]
 })
 export class AppComponent {
   slimeIsPresent = false;
   ng_death = false;
+  ng_attack = false;
 
   constructor() {
   }
@@ -32,16 +39,19 @@ export class AppComponent {
 
   death(){
     this.slimeIsPresent = false;
+    // TODO Animation angular avec forwards  
     this.ng_death = true;
     setTimeout(() => {this.ng_death = false;}, 1000);
-    // TODO Animation angular avec forwards
+    // TODO 2e animation angular en même temps  
     this.hideSlime()
-    // TODO 2e animation angular en même temps
 
   }
 
   attack(){
     // TODO Jouer une animation et augmenter l'intensité du mouvement avec scale
+    this.ng_attack = true;
+    setTimeout(() => {this.ng_attack = false;}, 1000);
+
     // TODO Jouer une autre animation avant
   }
 
