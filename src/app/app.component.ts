@@ -16,8 +16,8 @@ const DEATH_DURATION_SECONDS = 0.5
     ]),
     trigger('attack', [
       transition('* => true', [
+        useAnimation( shakeX, { params: { timing: DEATH_DURATION_SECONDS } } ),
         useAnimation(pulse, { params: { timing: 0.3, scale: 4.5} }),
-        // useAnimation( /* Code de la deuxième animation */ ),
       ])
     ]),
     ]
@@ -26,6 +26,7 @@ export class AppComponent {
   slimeIsPresent = false;
   ng_death = false;
   ng_attack = false;
+  css_hit = false;
 
   constructor() {
   }
@@ -57,6 +58,9 @@ export class AppComponent {
 
   hit(){
     // TODO Utilisé Animista pour faire une animation différente avec css (wobble)
+    this.css_hit = true;
+    setTimeout(() => {this.css_hit = false;}, 1000);
+
   }
 
   showSlime(){
