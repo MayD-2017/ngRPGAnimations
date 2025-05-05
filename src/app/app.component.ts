@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import {transition, trigger, useAnimation} from "@angular/animations";
-import { pulse, shakeX } from 'ng-animate';
+import { bounce, flip, pulse, shakeX } from 'ng-animate';
+import { lastValueFrom, timer } from 'rxjs';
 
 const DEATH_DURATION_SECONDS = 0.5
 @Component({
@@ -20,6 +21,22 @@ const DEATH_DURATION_SECONDS = 0.5
         useAnimation(pulse, { params: { timing: 0.3, scale: 4.5} }),
       ])
     ]),
+    trigger('bounce', [
+      transition('* => true', [
+        useAnimation(bounce, { params: { timing: 1} })
+      ])
+    ]),
+    trigger('shake', [
+      transition('* => true', [
+        useAnimation( shakeX, { params: { timing: 0.75 } } ),
+      ])
+    ]),
+    trigger('flip', [
+      transition('* => true', [
+        useAnimation(flip, { params: { timing: 0.75} })
+      ])
+    ]),
+    
     ]
 })
 export class AppComponent {
@@ -27,13 +44,23 @@ export class AppComponent {
   ng_death = false;
   ng_attack = false;
   css_hit = false;
-
+  ng_bounce = false;
+  ng_shake = false;
+  ng_flip = false;
+  css_rotate = false;
+  css_rotatetop = false;
+  keepPlayingAnimation: any;
   constructor() {
   }
 
   spawn() {
     this.slimeIsPresent = true;
     this.ng_death = false;
+    this.ng_bounce = false;
+    this.ng_shake = false;
+    this.ng_flip = false;
+    this.css_rotate = false;
+    this.css_rotatetop = false;
     // TODO Animation angular avec forwards
     this.showSlime()
   }
@@ -73,5 +100,40 @@ export class AppComponent {
     var element = document.getElementById("slimeyId");
     element?.classList.remove("fadeIn");
     element?.classList.add("fadeOut");
+  }
+
+  async BSF(){    
+    this.ng_bounce = true;
+    await this.waitFor(1, this.ng_bounce);
+    this.ng_shake = true;
+    await this.waitFor(1, this.ng_shake);
+    this.ng_flip = true;
+    await this.waitFor(1, this.ng_flip);
+
+  }
+
+  ITS(){
+    this.playRotate();
+  }
+
+  playRotate() {
+    this.css_rotate = true;
+    setTimeout(() => {
+      this.css_rotate = false;
+      this.playRotateTop();
+    },2000);
+  }
+
+  playRotateTop() {
+    this.css_rotatetop = true;
+    setTimeout(() => {
+      this.css_rotatetop = false;
+      this.playRotate();
+    },1000);
+  }
+
+  async waitFor(delayInSeconds:number, animation : boolean) {
+    animation = false;
+    await lastValueFrom(timer(delayInSeconds * 1000));
   }
 }
